@@ -22,3 +22,11 @@ class Constants:
     # The default length for generated email usernames.
     # This constant specifies the default number of characters for the username part of generated email addresses.
     DEFAULT_EMAIL_USERNAME_LENGTH = 10
+
+    # The default format for generated date.
+    # This constant specifies the default format of generated dates.
+    DEFAULT_DATE_FORMAT = "YYYY-MMM-DD"
+
+    # The default type for generated uuid.
+    # This constant specifies the default type of generated uuid.
+    DEFAULT_UUID_TYPE = "v4"
