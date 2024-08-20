@@ -6,7 +6,7 @@ import math
 import numpy as np
 from typing import List
 from datetime import datetime
-from qaNexusDataGeneration.constantVariables.DataGeneratorConstants import Constants
+from qaNexusDataGeneration.statictVariables.DataGeneratorConstants import Constants
 from qaNexusDataGeneration.enums.SupportedDateFormatsEnums import SupportedDateFormatsEnums
 from qaNexusDataGeneration.enums.CountryCodePhoneNumberPatternEnums import CountryCodePhoneNumberPatternEnums
 from qaNexusDataGeneration.enums.MonthsAbbreviationsEnums import MonthsAbbreviationsEnums
