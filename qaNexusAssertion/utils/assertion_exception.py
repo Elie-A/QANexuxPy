@@ -7,7 +7,7 @@ class AssertionException(Exception):
     The exception message will be formatted with a predefined color specified in Constants.
     """
 
-    def __init__(self, message):
+    def __init__(message):
         """
         Constructs a new AssertionException with the specified detail message.
         The message is prefixed and suffixed with color codes from Constants
