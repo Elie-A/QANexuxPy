@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="QANexus",
-    version="0.1.0",
+    version="1.0.0",
     author="Elie Abdallah",
     author_email="elieabdallah961@gmail.com",
     description="A collection of utilities and assertions for QA and data generation.",

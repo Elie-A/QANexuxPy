@@ -7,12 +7,18 @@ import numpy as np
 from typing import List
 from datetime import datetime
 from qaNexusDataGeneration.statictVariables.DataGeneratorConstants import Constants
-from qaNexusDataGeneration.enums.SupportedDateFormatsEnums import SupportedDateFormatsEnums
-from qaNexusDataGeneration.enums.CountryCodePhoneNumberPatternEnums import CountryCodePhoneNumberPatternEnums
-from qaNexusDataGeneration.enums.MonthsAbbreviationsEnums import MonthsAbbreviationsEnums
+from qaNexusDataGeneration.enums.SupportedDateFormatsEnums import (
+    SupportedDateFormatsEnums,
+)
+from qaNexusDataGeneration.enums.CountryCodePhoneNumberPatternEnums import (
+    CountryCodePhoneNumberPatternEnums,
+)
+from qaNexusDataGeneration.enums.MonthsAbbreviationsEnums import (
+    MonthsAbbreviationsEnums,
+)
 from qaNexusDataGeneration.model.ComplexNumberModel import ComplexNumber
 
-    
+
 def generate_string(length=Constants.DEFAULT_STRING_LENGTH):
     """
     Generates a random string with the default length specified in Constants.DEFAULT_STRING_LENGTH.
@@ -22,8 +28,8 @@ def generate_string(length=Constants.DEFAULT_STRING_LENGTH):
     """
     return "".join(random.choices(Constants.ALPHA_NUM, k=length))
 
+
 def generate_email(
-    
     domain=Constants.DEFAULT_DOMAIN,
     username_length=Constants.DEFAULT_EMAIL_USERNAME_LENGTH,
 ):
@@ -36,6 +42,7 @@ def generate_email(
     """
     username = generate_string(username_length)
     return username + domain
+
 
 def generate_phone_number(country_code="US"):
     """
@@ -52,13 +59,14 @@ def generate_phone_number(country_code="US"):
 
     phone_regex = country_enum.value
     pattern = re.compile(phone_regex)
-    
+
     phone_number = generate_random_phone_number(phone_regex)
-    
+
     while not pattern.match(phone_number):
         phone_number = generate_random_phone_number(phone_regex)
-        
+
     return phone_number
+
 
 def generate_random_phone_number(pattern):
     """
@@ -70,36 +78,37 @@ def generate_random_phone_number(pattern):
     phone_number = []
     is_escaped = False
     i = 0
-    
+
     while i < len(pattern):
         ch = pattern[i]
-        
+
         if is_escaped:
-            if ch == 'd':
+            if ch == "d":
                 # Handle \d{n} pattern
-                if i + 1 < len(pattern) and pattern[i + 1] == '{':
-                    closing_brace_index = pattern.find('}', i + 2)
+                if i + 1 < len(pattern) and pattern[i + 1] == "{":
+                    closing_brace_index = pattern.find("}", i + 2)
                     if closing_brace_index != -1:
-                        repeat_count_str = pattern[i + 2:closing_brace_index]
+                        repeat_count_str = pattern[i + 2 : closing_brace_index]
                         repeat_count = int(repeat_count_str)
                         phone_number.extend([str(random.randint(0, 9))] * repeat_count)
                         i = closing_brace_index
                     else:
-                        phone_number.append('d')
+                        phone_number.append("d")
                 else:
                     phone_number.append(str(random.randint(0, 9)))
             else:
                 phone_number.append(ch)
             is_escaped = False
         else:
-            if ch == '\\':
+            if ch == "\\":
                 is_escaped = True
             else:
                 phone_number.append(ch)
-                
+
         i += 1
 
-    return ''.join(phone_number)
+    return "".join(phone_number)
+
 
 def get_max_days(month, year):
     """
@@ -116,6 +125,7 @@ def get_max_days(month, year):
     else:  # All other months
         return 31
 
+
 def generate_date(format=Constants.DEFAULT_DATE_FORMAT):
     """
     Generates a random date based on the specified format. If no format is provided, it defaults to "yyyy-MM-dd".
@@ -128,7 +138,7 @@ def generate_date(format=Constants.DEFAULT_DATE_FORMAT):
     day = ""
 
     secure_random = random.Random()
-    
+
     # Get the current date and time
     now = datetime.now()
 
@@ -142,7 +152,9 @@ def generate_date(format=Constants.DEFAULT_DATE_FORMAT):
         format_string = format.date_format
 
     if "yyyy" in format_string or "YYYY" in format_string:
-        year = secure_random.randint(1900, current_year)  # Random year between 1900 and current year
+        year = secure_random.randint(
+            1900, current_year
+        )  # Random year between 1900 and current year
 
     if "MM" in format_string:
         month_num = secure_random.randint(1, 12)  # Random month between 1 and 12
@@ -158,7 +170,6 @@ def generate_date(format=Constants.DEFAULT_DATE_FORMAT):
             max_days = 31
         day = f"{secure_random.randint(1, max_days):02d}"  # Random day
 
-
     if "DD" in format_string:
         if year != -1 and month.isdigit():
             max_days = get_max_days(int(month), year)
@@ -166,13 +177,15 @@ def generate_date(format=Constants.DEFAULT_DATE_FORMAT):
             max_days = 31
         day = f"{secure_random.randint(1, max_days):02d}"  # Random day
 
-    return (format_string
-            .replace("YYYY", str(year))
-            .replace("yyyy", str(year))
-            .replace("MMM", month)
-            .replace("MM", month)
-            .replace("DD", day)
-            .replace("dd", day))
+    return (
+        format_string.replace("YYYY", str(year))
+        .replace("yyyy", str(year))
+        .replace("MMM", month)
+        .replace("MM", month)
+        .replace("DD", day)
+        .replace("dd", day)
+    )
+
 
 def generate_uuid(type=Constants.DEFAULT_UUID_TYPE):
     """
@@ -180,7 +193,7 @@ def generate_uuid(type=Constants.DEFAULT_UUID_TYPE):
 
     This method generates a UUID (Universally Unique Identifier) of the specified version.
     The following UUID types are supported:
-    
+
     - "v1": UUID based on the host ID and current time.
     - "v3": UUID based on the MD5 hash of a namespace and a name.
     - "v4": Randomly generated UUID.
@@ -199,15 +212,15 @@ def generate_uuid(type=Constants.DEFAULT_UUID_TYPE):
     Example:
     >>> generate_uuid("v1")
     'f47ac10b-58cc-4372-a567-0e02b2c3d479'
-    
+
     >>> generate_uuid("v4")
     '3d4e2fbb-7f5f-4d46-9250-27f85c44d5d6'
-    
+
     >>> generate_uuid("v5")
     '6ba7b810-9dad-11d1-80b4-00c04fd430c8'
 
     Notes:
-    - For UUID versions v3 and v5, the name parameter is hardcoded in this implementation. 
+    - For UUID versions v3 and v5, the name parameter is hardcoded in this implementation.
     To customize, you might need to modify the method or provide additional parameters.
     """
     if type == "v1":
@@ -220,7 +233,8 @@ def generate_uuid(type=Constants.DEFAULT_UUID_TYPE):
         return str(uuid.uuid5())
     else:
         return str(uuid.uuid4())
-    
+
+
 def generate_ssn():
     """
     Generates a random Social Security Number (SSN) in the format "XXX-XX-XXXX".
@@ -229,10 +243,9 @@ def generate_ssn():
         str: A randomly generated SSN in the format "XXX-XX-XXXX".
     """
     return "{:03d}-{:02d}-{:04d}".format(
-        random.randint(0, 999),
-        random.randint(0, 99),
-        random.randint(0, 9999)
+        random.randint(0, 999), random.randint(0, 99), random.randint(0, 9999)
     )
+
 
 def generate_passport_number():
     """
@@ -241,8 +254,9 @@ def generate_passport_number():
     Returns:
         str: A randomly generated passport number as a string of 9 digits.
     """
-    passport_number = ''.join(str(random.randint(0, 9)) for _ in range(9))
+    passport_number = "".join(str(random.randint(0, 9)) for _ in range(9))
     return passport_number
+
 
 def calculate_luhn_checksum(number):
     """
@@ -266,6 +280,7 @@ def calculate_luhn_checksum(number):
         alternate = not alternate
     return (10 - (sum_ % 10)) % 10
 
+
 def generate_credit_card_number():
     """
     Generates a random credit card number, including a Luhn checksum digit.
@@ -273,9 +288,10 @@ def generate_credit_card_number():
     Returns:
         str: A randomly generated credit card number.
     """
-    cc_number = ''.join(str(random.randint(0, 9)) for _ in range(15))
+    cc_number = "".join(str(random.randint(0, 9)) for _ in range(15))
     checksum = calculate_luhn_checksum(cc_number)
     return cc_number + str(checksum)
+
 
 def generate_bank_account_number():
     """
@@ -284,7 +300,8 @@ def generate_bank_account_number():
     Returns:
         str: A randomly generated bank account number as a string of 12 digits.
     """
-    return ''.join(str(random.randint(0, 9)) for _ in range(12))
+    return "".join(str(random.randint(0, 9)) for _ in range(12))
+
 
 def generate_iban():
     """
@@ -294,7 +311,8 @@ def generate_iban():
         str: A randomly generated IBAN with the country code "DE" followed by 20 digits.
     """
     country_code = "DE"
-    return country_code + ''.join(str(random.randint(0, 9)) for _ in range(20))
+    return country_code + "".join(str(random.randint(0, 9)) for _ in range(20))
+
 
 def generate_boolean():
     """
@@ -304,6 +322,7 @@ def generate_boolean():
         bool: A randomly generated boolean value.
     """
     return random.choice([True, False])
+
 
 def generate_binary_data(length):
     """
@@ -317,6 +336,7 @@ def generate_binary_data(length):
     """
     return random.randbytes(length)
 
+
 def generate_timestamp():
     """
     Generates a random timestamp.
@@ -329,6 +349,7 @@ def generate_timestamp():
     random_time = current_time - random_millis
     return datetime.datetime.fromtimestamp(random_time / 1000).isoformat()
 
+
 def generate_unix_timestamp():
     """
     Generates a random Unix timestamp.
@@ -337,6 +358,7 @@ def generate_unix_timestamp():
         int: A randomly generated Unix timestamp.
     """
     return int(time.time()) - random.randint(0, 1000000000)
+
 
 def generate_time():
     """
@@ -350,6 +372,7 @@ def generate_time():
     seconds = random.randint(0, 59)
     return f"{hours:02}:{minutes:02}:{seconds:02}"
 
+
 def generate_ip_address():
     """
     Generates a random IP address in the format "X.X.X.X".
@@ -359,6 +382,7 @@ def generate_ip_address():
     """
     return f"{random.randint(0, 255)}.{random.randint(0, 255)}.{random.randint(0, 255)}.{random.randint(0, 255)}"
 
+
 def generate_mac_address():
     """
     Generates a random MAC address in the format "XX:XX:XX:XX:XX:XX".
@@ -366,7 +390,8 @@ def generate_mac_address():
     Returns:
         str: A randomly generated MAC address.
     """
-    return ':'.join(f"{random.randint(0, 255):02X}" for _ in range(6))
+    return ":".join(f"{random.randint(0, 255):02X}" for _ in range(6))
+
 
 def generate_hex_color():
     """
@@ -376,6 +401,7 @@ def generate_hex_color():
         str: A randomly generated hex color code.
     """
     return f"#{random.randint(0, 0xFFFFFF):06X}"
+
 
 def generate_int(min_val, max_val):
     """
@@ -390,6 +416,7 @@ def generate_int(min_val, max_val):
     """
     return random.randint(min_val, max_val)
 
+
 def generate_float(min_val, max_val):
     """
     Generates a random float between the specified minimum and maximum values.
@@ -402,6 +429,7 @@ def generate_float(min_val, max_val):
         float: A randomly generated float between min_val and max_val.
     """
     return random.uniform(min_val, max_val)
+
 
 def generate_double(min_val, max_val):
     """
@@ -416,6 +444,7 @@ def generate_double(min_val, max_val):
     """
     return random.uniform(min_val, max_val)
 
+
 def generate_long(min_val, max_val):
     """
     Generates a random long between the specified minimum and maximum values.
@@ -429,6 +458,7 @@ def generate_long(min_val, max_val):
     """
     return random.randint(min_val, max_val)
 
+
 def generate_byte():
     """
     Generates a random byte.
@@ -437,6 +467,7 @@ def generate_byte():
         int: A randomly generated byte.
     """
     return random.randint(0, 255)
+
 
 def generate_byte_array(length):
     """
@@ -449,6 +480,7 @@ def generate_byte_array(length):
         bytes: A randomly generated byte array.
     """
     return random.randbytes(length)
+
 
 def generate_short(min_val, max_val):
     """
@@ -463,6 +495,7 @@ def generate_short(min_val, max_val):
     """
     return random.randint(min_val, max_val)
 
+
 def generate_char(min_val, max_val):
     """
     Generates a random char between the specified minimum and maximum values (inclusive).
@@ -476,6 +509,7 @@ def generate_char(min_val, max_val):
     """
     return chr(random.randint(ord(min_val), ord(max_val)))
 
+
 def generate_hex(length):
     """
     Generates a random hex string of the specified length.
@@ -486,7 +520,8 @@ def generate_hex(length):
     Returns:
         str: A randomly generated hex string.
     """
-    return ''.join(f"{random.randint(0, 15):X}" for _ in range(length))
+    return "".join(f"{random.randint(0, 15):X}" for _ in range(length))
+
 
 def generate_gaussian(mean: float, standard_deviation: float) -> float:
     """
@@ -501,6 +536,7 @@ def generate_gaussian(mean: float, standard_deviation: float) -> float:
     """
     return random.gauss(mean, standard_deviation)
 
+
 def generate_random_with_custom_distribution(probabilities: List[float]) -> int:
     """
     Generates a random integer based on a custom distribution.
@@ -513,6 +549,7 @@ def generate_random_with_custom_distribution(probabilities: List[float]) -> int:
     """
     return np.random.choice(len(probabilities), p=probabilities)
 
+
 def generate_random_prime(min_val: int, max_val: int) -> int:
     """
     Generates a random prime number between the specified minimum and maximum values.
@@ -524,6 +561,7 @@ def generate_random_prime(min_val: int, max_val: int) -> int:
     Returns:
         int: A randomly generated prime number between min_val and max_val.
     """
+
     def is_prime(num: int) -> bool:
         if num <= 1:
             return False
@@ -535,11 +573,12 @@ def generate_random_prime(min_val: int, max_val: int) -> int:
             if num % i == 0:
                 return False
         return True
-    
+
     num = random.randint(min_val, max_val)
     while not is_prime(num):
         num = random.randint(min_val, max_val)
     return num
+
 
 def generate_random_percentage() -> float:
     """
@@ -549,6 +588,7 @@ def generate_random_percentage() -> float:
         float: A randomly generated percentage.
     """
     return random.uniform(0.0, 100.0)
+
 
 def generate_random_from_set(s: List[int]) -> int:
     """
@@ -561,6 +601,7 @@ def generate_random_from_set(s: List[int]) -> int:
         int: A randomly selected integer from the given set.
     """
     return random.choice(s)
+
 
 def generate_random_even(min_val: int, max_val: int) -> int:
     """
@@ -578,6 +619,7 @@ def generate_random_even(min_val: int, max_val: int) -> int:
         num += 1
     return num
 
+
 def generate_random_odd(min_val: int, max_val: int) -> int:
     """
     Generates a random odd integer between the specified minimum and maximum values.
@@ -594,7 +636,10 @@ def generate_random_odd(min_val: int, max_val: int) -> int:
         num += 1
     return num
 
-def generate_unique_random_sequence(min_val: int, max_val: int, length: int) -> List[int]:
+
+def generate_unique_random_sequence(
+    min_val: int, max_val: int, length: int
+) -> List[int]:
     """
     Generates a unique random sequence of integers.
 
@@ -612,6 +657,7 @@ def generate_unique_random_sequence(min_val: int, max_val: int, length: int) -> 
     random.shuffle(numbers)
     return numbers[:length]
 
+
 def generate_random_exponential(lambda_val: float) -> float:
     """
     Generates a random value based on an exponential distribution.
@@ -624,7 +670,10 @@ def generate_random_exponential(lambda_val: float) -> float:
     """
     return -math.log(1 - random.random()) / lambda_val
 
-def generate_random_complex_number(real_min: float, real_max: float, imaginary_min: float, imaginary_max: float) -> ComplexNumber:
+
+def generate_random_complex_number(
+    real_min: float, real_max: float, imaginary_min: float, imaginary_max: float
+) -> ComplexNumber:
     """
     Generates a random complex number with real and imaginary parts within specified ranges.
 
@@ -640,6 +689,7 @@ def generate_random_complex_number(real_min: float, real_max: float, imaginary_m
     real_part = random.uniform(real_min, real_max)
     imaginary_part = random.uniform(imaginary_min, imaginary_max)
     return ComplexNumber(real_part, imaginary_part)
+
 
 def is_numeric(s: str) -> bool:
     """
